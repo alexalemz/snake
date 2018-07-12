@@ -25,12 +25,18 @@ var snake = [];
 var gameInterval;
 var gameSpeed = 500;
 var audioElement;
+var eatingSound;
+var gameoverSound;
 
 $(document).ready(function() {
     // Audio setup
     audioElement = document.createElement("audio");
     audioElement.setAttribute("src", "sidewinder_64.mp3");
     audioElement.loop = true;
+    eatingSound = document.createElement("audio");
+    eatingSound.setAttribute("src", "pacman_eatfruit.wav");
+    gameoverSound = document.createElement("audio");
+    gameoverSound.setAttribute("src", "pacman_death.wav");
     // MIDIjs.play('sidewinder.mid');
     
     // Set the snake and first food item to default setting
@@ -123,6 +129,7 @@ function snakeGame() {
             // If the snake ate the food, we don't need to move the tail or pop it.
             // We also increase the snake's length by one.
             if (wasFood) {
+                eatingSound.play();
                 // console.log("Just ate some food");
                 var foodSquare = randomEmptySquare();
                 setSquare(foodSquare.row, foodSquare.col, 'food');
@@ -145,6 +152,7 @@ function snakeGame() {
 
     // If it hits something, game over.
     else {
+        gameoverSound.play();
         alert("Game over");
         clearInterval(gameInterval);
 
