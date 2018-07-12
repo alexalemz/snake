@@ -24,65 +24,17 @@ var gridarray = [];
 var snake = [];
 var gameInterval;
 var gameSpeed = 500;
+var audioElement;
 
 $(document).ready(function() {
-    // Create grid of squares
-    const grid = $("#grid");
-    gridarray = [];
-    for (var i = 0; i < gridlength; i++) {
-        var row = $("<div>").addClass("divRow");
-        var gridarrayrow = new Array(gridlength);
-        for (var j = 0; j < gridlength; j++) {
-            // Create square/span
-            var span = $("<span>");
-            span.addClass("square");
-            span.attr({
-                row: i,
-                col: j
-            });
-            row.append(span);
-        }
-        grid.append(row);
-        gridarray.push(gridarrayrow);
-    }
-
-    // Create border
-    $(".square[row=0]").addClass("wall");
-    $(".square[row=" + (gridlength-1) + "]").addClass("wall");
-    $(".square[col=0]").addClass("wall");
-    $(".square[col=" + (gridlength-1) + "]").addClass("wall");
-    // Create border in gridarray
-    for (var i=0; i<gridlength; i++) {
-        for (var j=0; j<gridlength; j++) {
-            if (i === 0 || i === gridlength-1 || j === 0 || j === gridlength-1) {
-                setSquare(i, j, 'wall');
-            }
-        }
-    }
-
-    // Place the snake somewhere on the grid.
-    // The center should be good to start.
-    const center = gridlength/2;
-    // Place snake head
-    snake.push( {row: center, col: center} );
-    setSquare(center, center, 'head');
-    fillSquare(center, center, 'head');
-    // Place snake body (only 1 square)
-    snake.push({row: (center+1), col: center});
-    setSquare(center+1, center, 'body');
-    fillSquare(center+1, center, 'body');
-    // Place snake tail
-    snake.push({row: (center+2), col: center});
-    setSquare(center+2, center, 'tail');
-    fillSquare(center+2, center, 'tail');
-
-    // Place the food somewhere
-    var foodSquare = randomEmptySquare();
-    setSquare(foodSquare.row, foodSquare.col, 'food');
-    fillSquare(foodSquare.row, foodSquare.col, 'food');
-
-
-
+    // Audio setup
+    audioElement = document.createElement("audio");
+    audioElement.setAttribute("src", "sidewinder_64.mp3");
+    audioElement.loop = true;
+    // MIDIjs.play('sidewinder.mid');
+    
+    // Set the snake and first food item to default setting
+    resetGame();
 
     // Start the game
     // gameInterval = setInterval(snakeGame, gameSpeed);
@@ -195,6 +147,14 @@ function snakeGame() {
     else {
         alert("Game over");
         clearInterval(gameInterval);
+
+        // Change the pausePlayBtn to say Restart
+        var pausePlayBtn = $("#pausePlayBtn");
+        pausePlayBtn.html('<i class="fa fa-refresh"></i> Restart');
+        // Remove .pauseBtn and add .restartBtn
+        pausePlayBtn.toggleClass("pauseBtn restartBtn");
+        // Change data-state to 'over'
+        pausePlayBtn.attr('data-state', 'over');
     }
 
     // console.log(gridarray);
@@ -204,30 +164,41 @@ function snakeGame() {
 $(document).keyup(function(event) {
     // console.log(event.which);
     const keynum = event.which;
-    // Arrow keypress events
-    // Left arrow keypress 37
-    if (keynum === 37)
-        pressLeft();
-    // Up arrow keypress 38
-    else if (keynum === 38)
-        pressUp();
-    // Right arrow keypress 39
-    else if (keynum === 39)
-        pressRight();
-    // Down arrow keypress 40
-    else if (keynum === 40)
-        pressDown();
+    switch (keynum) {
+        // Arrow keypress events
+        // Left arrow keypress 37
+        case 37:
+            pressLeft();
+            break;
+        // Up arrow keypress 38
+        case 38:
+            pressUp();
+            break;
+        // Right arrow keypress 39
+        case 39:
+            pressRight();
+            break;
+        // Down arrow keypress 40
+        case 40:
+            pressDown();
+            break;
 
-    // Hit the spacebar to pause or play
-    else if (keynum === 32) {
-        var pausePlayBtn = $("#pausePlayBtn");
-        var state = pausePlayBtn.attr('data-state');
-        // console.log('state', state);
+        // Hit the spacebar to pause or play (or restart)
+        case 32:
+            event.preventDefault();
+            var pausePlayBtn = $("#pausePlayBtn");
+            var state = pausePlayBtn.attr('data-state');
+            console.log('state', state);
 
-        if (state === 'pause')
-            playGame();
-        else if (state === 'play')
-            pauseGame();
+            if (state === 'pause') {
+                playGame();}
+            else if (state === 'play') {
+                pauseGame();}
+            else if (state === 'over') {
+                restartGame();
+            }
+            
+            break;
     }
 });
 
@@ -278,6 +249,10 @@ $(document).on("click", ".playBtn", function() {
     playGame();
 });
 
+$(document).on("click", ".restartBtn", function() {
+    restartGame();
+});
+
 
 function pauseGame() {
     clearInterval(gameInterval);
@@ -285,6 +260,7 @@ function pauseGame() {
     pausePlayBtn.html('<i class="fa fa-play"></i> Play');
     pausePlayBtn.toggleClass('pauseBtn playBtn');
     pausePlayBtn.attr('data-state', 'pause');
+    audioElement.pause();
 }
 
 function playGame() {
@@ -293,4 +269,74 @@ function playGame() {
     pausePlayBtn.html('<i class="fa fa-pause"></i> Pause');
     pausePlayBtn.toggleClass('pauseBtn playBtn');
     pausePlayBtn.attr('data-state', 'play');
+    audioElement.play();
+}
+
+function resetGame() {
+    // Create grid of squares
+    const grid = $("#grid");
+    grid.empty();
+    gridarray = [];
+    snake = [];
+    direction = nextDirection = 'N';
+
+    for (var i = 0; i < gridlength; i++) {
+        var row = $("<div>").addClass("divRow");
+        var gridarrayrow = new Array(gridlength);
+        for (var j = 0; j < gridlength; j++) {
+            // Create square/span
+            var span = $("<span>");
+            span.addClass("square");
+            span.attr({
+                row: i,
+                col: j
+            });
+            row.append(span);
+        }
+        grid.append(row);
+        gridarray.push(gridarrayrow);
+    }
+
+    // Create border
+    $(".square[row=0]").addClass("wall");
+    $(".square[row=" + (gridlength-1) + "]").addClass("wall");
+    $(".square[col=0]").addClass("wall");
+    $(".square[col=" + (gridlength-1) + "]").addClass("wall");
+    // Create border in gridarray
+    for (var i=0; i<gridlength; i++) {
+        for (var j=0; j<gridlength; j++) {
+            if (i === 0 || i === gridlength-1 || j === 0 || j === gridlength-1) {
+                setSquare(i, j, 'wall');
+            }
+        }
+    }
+
+    // Place the snake somewhere on the grid.
+    // The center should be good to start.
+    const center = gridlength/2;
+    // Place snake head
+    snake.push( {row: center, col: center} );
+    setSquare(center, center, 'head');
+    fillSquare(center, center, 'head');
+    // Place snake body (only 1 square)
+    snake.push({row: (center+1), col: center});
+    setSquare(center+1, center, 'body');
+    fillSquare(center+1, center, 'body');
+    // Place snake tail
+    snake.push({row: (center+2), col: center});
+    setSquare(center+2, center, 'tail');
+    fillSquare(center+2, center, 'tail');
+
+    // Place the food somewhere
+    var foodSquare = randomEmptySquare();
+    setSquare(foodSquare.row, foodSquare.col, 'food');
+    fillSquare(foodSquare.row, foodSquare.col, 'food');
+}
+
+// This runs when we hit the restart button
+function restartGame() {
+    var pausePlayBtn = $("#pausePlayBtn");
+    pausePlayBtn.toggleClass("playBtn restartBtn");
+    resetGame();
+    playGame();
 }
