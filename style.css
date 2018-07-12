@@ -55,7 +55,7 @@ h2 {
 }
 
 .arrowBtn {
-    margin-bottom: 1px;
+    margin-bottom: 5px;
 }
 
 
@@ -64,8 +64,15 @@ h2 {
         width: 4vw;
         height: 4vw;
     }
+
+    .arrowBtn {
+        width: 20vw;
+        height: 20vw;
+        font-size: 8vw;
+    }
 }
 
+/* Hide arrow buttons when in landscape mode  */
 @media only screen and (orientation: landscape) {
     .buttonsDiv {
         display: none;

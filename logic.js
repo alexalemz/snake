@@ -23,6 +23,7 @@ var gridarray = [];
 // The first element is the head. Each element is a square object.
 var snake = [];
 var gameInterval;
+var gameSpeed = 500;
 
 $(document).ready(function() {
     // Create grid of squares
@@ -84,7 +85,7 @@ $(document).ready(function() {
 
 
     // Start the game
-    gameInterval = setInterval(snakeGame, 500);
+    // gameInterval = setInterval(snakeGame, gameSpeed);
     //console.log(snake);
 });
 
@@ -170,7 +171,7 @@ function snakeGame() {
             // If the snake ate the food, we don't need to move the tail or pop it.
             // We also increase the snake's length by one.
             if (wasFood) {
-                console.log("Just ate some food");
+                // console.log("Just ate some food");
                 var foodSquare = randomEmptySquare();
                 setSquare(foodSquare.row, foodSquare.col, 'food');
                 fillSquare(foodSquare.row, foodSquare.col, 'food');
@@ -199,10 +200,11 @@ function snakeGame() {
     // console.log(gridarray);
 }
 
-// Arrow keypress events
+// Keypress events
 $(document).keyup(function(event) {
     // console.log(event.which);
     const keynum = event.which;
+    // Arrow keypress events
     // Left arrow keypress 37
     if (keynum === 37)
         pressLeft();
@@ -215,12 +217,24 @@ $(document).keyup(function(event) {
     // Down arrow keypress 40
     else if (keynum === 40)
         pressDown();
+
+    // Hit the spacebar to pause or play
+    else if (keynum === 32) {
+        var pausePlayBtn = $("#pausePlayBtn");
+        var state = pausePlayBtn.attr('data-state');
+        // console.log('state', state);
+
+        if (state === 'pause')
+            playGame();
+        else if (state === 'play')
+            pauseGame();
+    }
 });
 
 // Arrow button click events
 $(".arrowBtn").on("click", function() {
     var thisButton = this;
-    console.log(thisButton.id);
+    // console.log(thisButton.id);
     var btnId = thisButton.id;
     if (btnId === 'arrowLeft')
         pressLeft();
@@ -251,4 +265,32 @@ function pressRight() {
 function pressDown() {
     if (direction !== 'N')
         nextDirection = 'S';
+}
+
+
+// Pause the game
+// Click pause/play button
+$(document).on("click", ".pauseBtn", function() {
+    pauseGame();
+});
+
+$(document).on("click", ".playBtn", function() {
+    playGame();
+});
+
+
+function pauseGame() {
+    clearInterval(gameInterval);
+    var pausePlayBtn = $("#pausePlayBtn");
+    pausePlayBtn.html('<i class="fa fa-play"></i> Play');
+    pausePlayBtn.toggleClass('pauseBtn playBtn');
+    pausePlayBtn.attr('data-state', 'pause');
+}
+
+function playGame() {
+    gameInterval = setInterval(snakeGame, gameSpeed);
+    var pausePlayBtn = $("#pausePlayBtn");
+    pausePlayBtn.html('<i class="fa fa-pause"></i> Pause');
+    pausePlayBtn.toggleClass('pauseBtn playBtn');
+    pausePlayBtn.attr('data-state', 'play');
 }
