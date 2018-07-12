@@ -1,0 +1,35 @@
+.square {
+    width: 25px;
+    height: 25px;
+    /* border: 1px solid black; */
+    /* float: left; */
+    /* display: inline; */
+    display: inline-block;
+}
+
+.divRow {
+    margin-bottom: -4px;
+    /* padding: 0; */
+}
+
+.wall {
+    background: black;
+}
+
+.head {
+    background: darkgreen;
+}
+
+.body {
+    /* background: green; */
+    background: yellowgreen;
+}
+
+.tail {
+    /* background: darkolivegreen; */
+    background: rgb(138, 102, 35);
+}
+
+.food {
+    background: red;
+}
