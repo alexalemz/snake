@@ -204,15 +204,51 @@ $(document).keyup(function(event) {
     // console.log(event.which);
     const keynum = event.which;
     // Left arrow keypress 37
-    if (keynum === 37 && direction !== 'E') 
-        nextDirection = 'W';
+    if (keynum === 37)
+        pressLeft();
     // Up arrow keypress 38
-    else if (keynum === 38 && direction !== 'S')
-        nextDirection = 'N';
+    else if (keynum === 38)
+        pressUp();
     // Right arrow keypress 39
-    else if (keynum === 39 && direction !== 'W')
-        nextDirection = 'E';
+    else if (keynum === 39)
+        pressRight();
     // Down arrow keypress 40
-    else if (keynum === 40 && direction !== 'N')
-        nextDirection = 'S';
+    else if (keynum === 40)
+        pressDown();
 });
+
+// Arrow button click events
+$(".arrowBtn").on("click", function() {
+    var thisButton = this;
+    console.log(thisButton.id);
+    var btnId = thisButton.id;
+    if (btnId === 'arrowLeft')
+        pressLeft();
+    else if (btnId === 'arrowUp')
+        pressUp();
+    else if (btnId === 'arrowRight')
+        pressRight();
+    else if (btnId === 'arrowDown')
+        pressDown();
+});
+
+
+function pressLeft() {
+    if (direction !== 'E')
+        nextDirection = 'W';
+}
+
+function pressUp() {
+    if (direction !== 'S')
+        nextDirection = 'N';
+}
+
+function pressRight() {
+    if (direction !== 'W')
+        nextDirection = 'E';
+}
+
+function pressDown() {
+    if (direction !== 'N')
+        nextDirection = 'S';
+}

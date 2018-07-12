@@ -1,15 +1,27 @@
+.container {
+    /* margin: auto; */
+    text-align: center;
+}
+
+#grid {
+    display: table;
+    margin: auto;
+}
+
 .square {
-    width: 25px;
-    height: 25px;
+    width: 24px;
+    height: 24px;
     /* border: 1px solid black; */
     /* float: left; */
     /* display: inline; */
-    display: inline-block;
+    display: table-cell;
 }
 
 .divRow {
-    margin-bottom: -4px;
+    /* margin-bottom: -6px; */
     /* padding: 0; */
+    /* height: fit-content; */
+    display: table-row;
 }
 
 .wall {
@@ -32,4 +44,35 @@
 
 .food {
     background: red;
+}
+
+h2 {
+    /* margin: auto; */
+}
+
+#buttonsDiv {
+    /* margin: auto; */
+}
+
+.arrowBtn {
+    margin-bottom: 1px;
+}
+
+
+@media only screen and (orientation: portrait) {
+    .square {
+        width: 4vw;
+        height: 4vw;
+    }
+}
+
+@media only screen and (orientation: landscape) {
+    .buttonsDiv {
+        display: none;
+        visibility: hidden;
+    }
+    .arrowBtn {
+        display: none;
+        visibility: hidden;
+    }
 }
