@@ -1,3 +1,48 @@
+// ------------ Firebase stuff -------------------------------//
+
+// Initialize Firebase
+var config = {
+    apiKey: "AIzaSyDYuXqrfNquGyM8Im_aP_5mxtyGN8buiBE",
+    authDomain: "snake-1f5f5.firebaseapp.com",
+    databaseURL: "https://snake-1f5f5.firebaseio.com",
+    projectId: "snake-1f5f5",
+    storageBucket: "",
+    messagingSenderId: "28226935362"
+};
+firebase.initializeApp(config);
+
+// Get the currently signed-in user
+firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+      // User is signed in.
+      setUser(user);
+      $("#navbar-user").html(user.displayName);
+      $("#navbar-signInOutLink").attr("data", "sign-out").html("Sign Out");
+    } else {
+      // No user is signed in.
+      setUser(undefined);
+      $("#navbar-user").html("");
+      $("#navbar-signInOutLink").attr("data", "sign-in").html("Sign In").attr("href", "signIn_firebaseUI.html");
+    }
+});
+
+// Sign out listener
+$(document).on("click", "[data='sign-out']", function() {
+    var user = firebase.auth().currentUser;
+    if (user) {
+        firebase.auth().signOut().then(function() {
+            // Sign-out successful.
+        }).catch(function(error) {
+            // An error happened.
+        });
+    }
+});
+
+
+
+//---------------- Game logic ---------------------------------//
+
+
 // Create a grid of spans
 // Each span had an id or a property of it's column and row. 
 // We can select the specific span using jQuery.
@@ -27,16 +72,24 @@ var gameSpeed = 500;
 var audioElement;
 var eatingSound;
 var gameoverSound;
+var user;
+function setUser(currentUser) {user = currentUser;}
 
 $(document).ready(function() {
+    // If not signed-in, redirect to sign in page.
+    // user = firebase.auth().currentUser;
+    // if (!user) {
+    //     window.location.assign('signIn_firebaseUI.html');
+    // }
+
     // Audio setup
     audioElement = document.createElement("audio");
-    audioElement.setAttribute("src", "sidewinder_64.mp3");
+    audioElement.setAttribute("src", "assets/music/sidewinder_64.mp3");
     audioElement.loop = true;
     eatingSound = document.createElement("audio");
-    eatingSound.setAttribute("src", "pacman_eatfruit.wav");
+    eatingSound.setAttribute("src", "assets/sounds/pacman_eatfruit.wav");
     gameoverSound = document.createElement("audio");
-    gameoverSound.setAttribute("src", "pacman_death.wav");
+    gameoverSound.setAttribute("src", "assets/sounds/pacman_death.wav");
     // MIDIjs.play('sidewinder.mid');
     
     // Set the snake and first food item to default setting
@@ -348,3 +401,6 @@ function restartGame() {
     resetGame();
     playGame();
 }
+
+
+  

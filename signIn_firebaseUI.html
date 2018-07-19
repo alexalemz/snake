@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Snake Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"> -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" media="screen" href="assets/css/style.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="assets/css/signIn.css" />
+    <script src="https://www.gstatic.com/firebasejs/5.2.0/firebase.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyDYuXqrfNquGyM8Im_aP_5mxtyGN8buiBE",
+            authDomain: "snake-1f5f5.firebaseapp.com",
+            databaseURL: "https://snake-1f5f5.firebaseio.com",
+            projectId: "snake-1f5f5",
+            storageBucket: "",
+            messagingSenderId: "28226935362"
+        };
+        firebase.initializeApp(config);
+    </script>
+    <script src="https://cdn.firebase.com/libs/firebaseui/3.1.1/firebaseui.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.1.1/firebaseui.css" />
+    <script type="text/javascript">
+        // FirebaseUI config.
+        var uiConfig = {
+          signInSuccessUrl: 'index.html', //'<url-to-redirect-to-on-success>',
+          signInOptions: [
+            // Leave the lines as is for the providers you want to offer your users.
+            firebase.auth.EmailAuthProvider.PROVIDER_ID,
+            firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+            // firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+            // firebase.auth.TwitterAuthProvider.PROVIDER_ID,
+            // firebase.auth.GithubAuthProvider.PROVIDER_ID,
+            // firebase.auth.PhoneAuthProvider.PROVIDER_ID
+          ],
+          // Terms of service url.
+          tosUrl: '<your-tos-url>'
+        };
+  
+        // Initialize the FirebaseUI Widget using Firebase.
+        var ui = new firebaseui.auth.AuthUI(firebase.auth());
+        // The start method will wait until the DOM is loaded.
+        ui.start('#firebaseui-auth-container', uiConfig);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <img src="assets/images/rattlesnake-clipart-snake-hi.png">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="display-3">Snake Game</h1>
+            </div>
+        </div>
+        <!-- <form>
+            <div class="form-group">
+                <label for="nameInput">Name</label>
+                <input type="text" id="nameInput" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="passwordInput" >Password</label>
+                <input type="password" id="passwordInput" class="form-control">
+            </div>
+            <div class="form-row">
+                <div class="col">
+                    <button class="btn btn-primary btn-lg" id="signInBtn">Sign In</button>
+                </div>
+                <div class="col">
+                    <button class="btn btn-primary btn-lg" id="guestBtn">Play as Guest</button>
+                </div>
+            </div>
+        </form> -->
+
+        <div id="firebaseui-auth-container"></div>
+
+        
+        
+        
+    </div>
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="assets/javascript/signIn.js"></script>
+    <script src="assets/javascript/logic.js"></script>
+</body>
+</html>

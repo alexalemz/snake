@@ -1,0 +1,49 @@
+img {
+    width: 20%;
+    margin-top: 2%;
+    margin-bottom: -3%;
+    position: relative;
+    z-index: -1;
+}
+
+h1 {
+    margin: 3%;
+}
+
+label {
+    font-size: 24px;
+}
+
+form {
+    width: 50%;
+    margin: 0 auto;
+}
+
+.form-group {
+    text-align: left;
+}
+
+#guestBtn {
+    border-color: hotpink;
+    background-color: hotpink;
+}
+
+@media screen and (orientation: portrait) {
+    form {
+        width: 90%;
+    }
+
+    h1 {
+        margin: 5%;
+    }
+
+    .display-3 {
+        font-size: 15vw;
+    }
+
+    img {
+        width: 60%;
+        margin-top: 5%;
+        margin-bottom: -5%
+    }
+}
