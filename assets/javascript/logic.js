@@ -229,11 +229,17 @@ function snakeGame() {
 
         // Update Firebase, add this game's score to your list of game's and scores.
         if (user) {
-            firebase.database().ref("/history/" + user.uid).push(
+            firebase.database().ref("/history").child(user.uid).push(
                 {
                     score: score,
                     date: JSON.stringify(new Date())
-                }
+                }, 
+                function(error){
+                    if (error) {
+                     console.error(error);
+                     return;
+                    }
+                    console.log('Push successful');
             );
         }
     }
