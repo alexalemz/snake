@@ -25,7 +25,7 @@
 }
 
 .navbar-custom {
-    background-color: yellowgreen;
+    background-color: yellowgreen; /* #99cd32 */
     margin-bottom: 10px;
 }
 .navbar-custom .nav-link {
@@ -56,7 +56,7 @@
 }
 
 .head {
-    background: darkgreen;
+    background: darkgreen; /* #006400 */
 }
 
 .body {
@@ -66,7 +66,7 @@
 
 .tail {
     /* background: darkolivegreen; */
-    background: rgb(138, 102, 35);
+    background: rgb(138, 102, 35); /* #8a6623 */
 }
 
 .food {
