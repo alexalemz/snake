@@ -76,6 +76,7 @@ var gameSpeed = 500;
 var audioElement;
 var eatingSound;
 var gameoverSound;
+var score = 0;
 var user;
 function setUser(currentUser) {user = currentUser;}
 
@@ -185,7 +186,10 @@ function snakeGame() {
             var foodSquare = randomEmptySquare();
             setSquare(foodSquare.row, foodSquare.col, 'food');
             fillSquare(foodSquare.row, foodSquare.col, 'food');
-            $(".scoreCounter").text(snake.length - 3);
+            // Update score
+            score++;
+            // Display score
+            displayScore();
         }
         // Move the tail
         else {
@@ -222,6 +226,16 @@ function snakeGame() {
         pausePlayBtn.toggleClass("pauseBtn restartBtn");
         // Change data-state to 'over'
         pausePlayBtn.attr('data-state', 'over');
+
+        // Update Firebase, add this game's score to your list of game's and scores.
+        if (user) {
+            firebase.database().ref("/history/" + user.uid).push(
+                {
+                    score: score,
+                    date: JSON.stringify(new Date())
+                }
+            );
+        }
     }
 
     // console.log(gridarray);
@@ -400,7 +414,8 @@ function resetGame() {
     fillSquare(foodSquare.row, foodSquare.col, 'food');
 
     // Reset the score counter
-    $(".scoreCounter").text(0);
+    score = 0;
+    displayScore();
 }
 
 // This runs when we hit the restart button
@@ -411,5 +426,7 @@ function restartGame() {
     playGame();
 }
 
-
+function displayScore() {
+    $(".scoreCounter").text(score);
+}
   
