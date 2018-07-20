@@ -240,6 +240,7 @@ function snakeGame() {
                      return;
                     }
                     console.log('Push successful');
+                }
             );
         }
     }
