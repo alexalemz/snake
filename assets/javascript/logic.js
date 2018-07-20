@@ -20,6 +20,17 @@ firebase.auth().onAuthStateChanged(function(user) {
       $("#navbar-signInOutLink").attr("data", "sign-out").html("Sign Out");
       // Hide Score Counter (for non signed-in users)
       $("#score-display-signedOut").css("display", "none");
+      // Display Stats Row
+    //   $("#statsRow").css("display", "block");
+
+      // Get their high score
+      var userHistoryRef = firebase.database().ref("history/" + user.uid);
+      userHistoryRef.orderByChild("score").limitToLast(1).on("child_added", function(snapshot) {
+          // Set high score
+          highScore = snapshot.val().score;
+          // Display high score
+          $("#highScore").text(highScore);
+      });
     } else {
       // No user is signed in.
       setUser(undefined);
@@ -27,6 +38,8 @@ firebase.auth().onAuthStateChanged(function(user) {
       $("#navbar-signInOutLink").attr("data", "sign-in").html("Sign In").attr("href", "signIn_firebaseUI.html");
       // Hide Stats Row
       $("#statsRow").css("display", "none");
+      // Display Score Counter (for non signed-in users)
+      $("#score-display-signedOut").css("display", "block");
     }
 });
 
@@ -77,6 +90,8 @@ var audioElement;
 var eatingSound;
 var gameoverSound;
 var score = 0;
+var highScore = 0;
+var steps = 0;
 var user;
 function setUser(currentUser) {user = currentUser;}
 
@@ -211,12 +226,14 @@ function snakeGame() {
         const oldhead = snake[1];
         setSquare(oldhead.row, oldhead.col, 'body');
         fillSquare(oldhead.row, oldhead.col, 'body');
+
+        // Increment number of steps
+        steps++;
     }
 
     // If it hits something, game over.
     else {
         gameoverSound.play();
-        alert("Game over");
         clearInterval(gameInterval);
 
         // Change the pausePlayBtn to say Restart
@@ -232,6 +249,7 @@ function snakeGame() {
             firebase.database().ref("/history").child(user.uid).push(
                 {
                     score: score,
+                    stepCount: steps,
                     date: JSON.stringify(new Date())
                 }, 
                 function(error){
@@ -243,6 +261,7 @@ function snakeGame() {
                 }
             );
         }
+        alert("Game over");
     }
 
     // console.log(gridarray);
@@ -423,6 +442,9 @@ function resetGame() {
     // Reset the score counter
     score = 0;
     displayScore();
+
+    // Reset number of steps
+    steps = 0;
 }
 
 // This runs when we hit the restart button
