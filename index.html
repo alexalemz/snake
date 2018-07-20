@@ -11,14 +11,27 @@
     <link rel="stylesheet" type="text/css" media="screen" href="assets/css/style.css" />
 </head>
 <body>
-    <nav class="navbar navbar-light bg-light">
+    <nav class="navbar navbar-dark navbar-custom">
+        <div class="container">
         <a class="navbar-brand" href="#">Snake</a>
         <span class="navbar-text ml-auto" id="navbar-user">User</span>
         <a class="nav-link ml-2" href="#" id="navbar-signInOutLink">Sign In</a>
+        </div>
     </nav>
     <div class="container">
         <div id="grid"></div>
-        <h2>Score: <span id=score>0</span></h2>
+        <h2 id="score-display-signedOut">Score: <span class="scoreCounter">0</span></h2>
+        <div class="row" id="statsRow">
+            <div class="col-3">
+                <span id="score-display-signedIn">Score<br><span class="scoreCounter">0</span></span>
+            </div>
+            <div class="col-6">
+                <span id="highScore-display">High Score<br><span id="highScore">0</span></span>
+            </div>
+            <div class="col-3">
+                <span id="extraLives-display">Lives<br><span id="extraLives">0</span></span>
+            </div>
+        </div>
 
         <!-- Arrow buttons for mobile -->
         <div id="buttonsDiv" class="">

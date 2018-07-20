@@ -18,16 +18,20 @@ firebase.auth().onAuthStateChanged(function(user) {
       setUser(user);
       $("#navbar-user").html(user.displayName);
       $("#navbar-signInOutLink").attr("data", "sign-out").html("Sign Out");
+      // Hide Score Counter (for non signed-in users)
+      $("#score-display-signedOut").css("display", "none");
     } else {
       // No user is signed in.
       setUser(undefined);
       $("#navbar-user").html("");
       $("#navbar-signInOutLink").attr("data", "sign-in").html("Sign In").attr("href", "signIn_firebaseUI.html");
+      // Hide Stats Row
+      $("#statsRow").css("display", "none");
     }
 });
 
-// Sign out listener
-$(document).on("click", "[data='sign-out']", function() {
+// Sign-out link click listener
+$(document).on("click", "#navbar-signInOutLink[data='sign-out']", function() {
     var user = firebase.auth().currentUser;
     if (user) {
         firebase.auth().signOut().then(function() {
@@ -164,43 +168,45 @@ function snakeGame() {
             nextSquare.col--; break;
     }
 
-    if (squareIsEmpty(nextSquare.row, nextSquare.col) || 
-        squareContents(nextSquare.row, nextSquare.col) === 'food') {
-            var wasFood = false;
-            if (squareContents(nextSquare.row, nextSquare.col) === 'food')
-                wasFood = true;
+    // See if the nextSquare was food
+    var wasFood = (squareContents(nextSquare.row, nextSquare.col) === 'food') ? true : false;
+    // See if the nextSquare was it's tail
+    var wasTail = (squareContents(nextSquare.row, nextSquare.col) === 'tail') ? true : false;
 
-            // Prepend the nextSquare into snake array
-            snake.unshift(nextSquare);
-            // Set this as the new head
-            setSquare(nextSquare.row, nextSquare.col, 'head');
-            fillSquare(nextSquare.row, nextSquare.col, 'head');
-            // Change the old head to body
-            const oldhead = snake[1];
-            setSquare(oldhead.row, oldhead.col, 'body');
-            fillSquare(oldhead.row, oldhead.col, 'body');
-            // If the snake ate the food, we don't need to move the tail or pop it.
-            // We also increase the snake's length by one.
-            if (wasFood) {
-                eatingSound.play();
-                // console.log("Just ate some food");
-                var foodSquare = randomEmptySquare();
-                setSquare(foodSquare.row, foodSquare.col, 'food');
-                fillSquare(foodSquare.row, foodSquare.col, 'food');
-                $("#score").text(snake.length - 3);
-            }
-            else {
-                // Remove the location of the old tail
-                var oldtail = snake.pop();
-                // Remove the old tail from gridarray, etc
-                setSquare(oldtail.row, oldtail.col, undefined);
-                fillSquare(oldtail.row, oldtail.col, '');
-                // Set the new tail
-                var newTail = snake[snake.length-1];
-                setSquare(newTail.row, newTail.col, 'tail');
-                fillSquare(newTail.row, newTail.col, 'tail');
-            }
-            
+    if (squareIsEmpty(nextSquare.row, nextSquare.col) || wasFood || wasTail) {
+        // Add the nextSquare into the beginning of snake array
+        snake.unshift(nextSquare);
+        
+        // If the snake ate the food, don't move the tail or pop it.
+        // Increase the snake's length by one.
+        if (wasFood) {
+            eatingSound.play();
+            // console.log("Just ate some food");
+            var foodSquare = randomEmptySquare();
+            setSquare(foodSquare.row, foodSquare.col, 'food');
+            fillSquare(foodSquare.row, foodSquare.col, 'food');
+            $(".scoreCounter").text(snake.length - 3);
+        }
+        // Move the tail
+        else {
+            // Remove the location of the old tail
+            var oldtail = snake.pop();
+            // Remove the old tail from gridarray, etc
+            setSquare(oldtail.row, oldtail.col, undefined);
+            fillSquare(oldtail.row, oldtail.col, '');
+            // Set the new tail
+            var newTail = snake[snake.length-1];
+            setSquare(newTail.row, newTail.col, 'tail');
+            fillSquare(newTail.row, newTail.col, 'tail');
+        }
+        
+        // Set nextSquare as the new head
+        setSquare(nextSquare.row, nextSquare.col, 'head');
+        fillSquare(nextSquare.row, nextSquare.col, 'head');
+        // Change the old head to body
+        const oldhead = snake[1];
+        setSquare(oldhead.row, oldhead.col, 'body');
+        fillSquare(oldhead.row, oldhead.col, 'body');
     }
 
     // If it hits something, game over.
@@ -392,6 +398,9 @@ function resetGame() {
     var foodSquare = randomEmptySquare();
     setSquare(foodSquare.row, foodSquare.col, 'food');
     fillSquare(foodSquare.row, foodSquare.col, 'food');
+
+    // Reset the score counter
+    $(".scoreCounter").text(0);
 }
 
 // This runs when we hit the restart button
