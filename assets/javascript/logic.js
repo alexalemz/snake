@@ -16,6 +16,11 @@ firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
       // User is signed in.
       setUser(user);
+      console.log('userOnAuthStateChanged',user);
+
+      // Check if the user has a current game, and if they do, load it, if they want.
+      loadCurrentGameFromFirebase();
+      
       $("#navbar-user").html(user.displayName);
       $("#navbar-signInOutLink").attr("data", "sign-out").html("Sign Out");
       // Hide Score Counter (for non signed-in users)
@@ -94,6 +99,8 @@ var highScore = 0;
 var steps = 0;
 var user;
 function setUser(currentUser) {user = currentUser;}
+var extralifeOnGrid = false;
+var extralives = 0;
 
 $(document).ready(function() {
     // If not signed-in, redirect to sign in page.
@@ -111,9 +118,17 @@ $(document).ready(function() {
     gameoverSound = document.createElement("audio");
     gameoverSound.setAttribute("src", "assets/sounds/pacman_death.wav");
     // MIDIjs.play('sidewinder.mid');
-    
+
+    // Check if the user has a current game in Firebase
+    // If they do, we'll set up everything based on their currentGame.
+    // Otherwise, we'll set things up the default way, through resetGame() .
+    var userHasCurrentGame = false;
+    var userCurrentGameData = undefined;
+    console.log("We've gotten this far.");
+
     // Set the snake and first food item to default setting
     resetGame();
+    
 
     // Start the game
     // gameInterval = setInterval(snakeGame, gameSpeed);
@@ -163,6 +178,7 @@ function setSquare(row, col, value) {
 // Adds a class to the square in the #grid
 function fillSquare(row, col, className) {
     var newClass = "square " + className;
+    // Finds the square with the attribute's of the given row and col, then changes its class.
     $(".square[row=" + row + "][col=" + col + "]").attr('class', newClass);
 }
 
@@ -198,6 +214,21 @@ function snakeGame() {
         if (wasFood) {
             eatingSound.play();
             // console.log("Just ate some food");
+
+            // Update currentGame in Firebase, kinda like a checkpoint.
+            if (user) {
+                firebase.database().ref("/currentGame").child(user.uid).set(
+                    {
+                        snakePosition: JSON.stringify(snake),
+                        stepCount: steps,
+                        date: JSON.stringify(new Date()),
+                        direction: direction,
+                        extralives: extralives
+                    }
+                );
+            }
+
+            // Place the food in a random empty square.
             var foodSquare = randomEmptySquare();
             setSquare(foodSquare.row, foodSquare.col, 'food');
             fillSquare(foodSquare.row, foodSquare.col, 'food');
@@ -229,6 +260,10 @@ function snakeGame() {
 
         // Increment number of steps
         steps++;
+
+        // Place an extra life square for a limited amount of time, 
+        // every once in a while.
+        // placeExtraLife();
     }
 
     // If it hits something, game over.
@@ -268,8 +303,8 @@ function snakeGame() {
 }
 
 // Keypress events
-$(document).keyup(function(event) {
-    // console.log(event.which);
+$(document).keydown(function(event) {
+    console.log(event.which);
     const keynum = event.which;
     switch (keynum) {
         // Arrow keypress events
@@ -380,59 +415,26 @@ function playGame() {
 }
 
 function resetGame() {
-    // Create grid of squares
     const grid = $("#grid");
-    grid.empty();
-    gridarray = [];
+
+    // Reset the grid and snake array.
+    resetGrid();
     snake = [];
     direction = nextDirection = 'N';
-
-    for (var i = 0; i < gridlength; i++) {
-        var row = $("<div>").addClass("divRow");
-        var gridarrayrow = new Array(gridlength);
-        for (var j = 0; j < gridlength; j++) {
-            // Create square/span
-            var span = $("<span>");
-            span.addClass("square");
-            span.attr({
-                row: i,
-                col: j
-            });
-            row.append(span);
-        }
-        grid.append(row);
-        gridarray.push(gridarrayrow);
-    }
-
-    // Create border
-    $(".square[row=0]").addClass("wall");
-    $(".square[row=" + (gridlength-1) + "]").addClass("wall");
-    $(".square[col=0]").addClass("wall");
-    $(".square[col=" + (gridlength-1) + "]").addClass("wall");
-    // Create border in gridarray
-    for (var i=0; i<gridlength; i++) {
-        for (var j=0; j<gridlength; j++) {
-            if (i === 0 || i === gridlength-1 || j === 0 || j === gridlength-1) {
-                setSquare(i, j, 'wall');
-            }
-        }
-    }
+    
 
     // Place the snake somewhere on the grid.
     // The center should be good to start.
     const center = gridlength/2;
     // Place snake head
-    snake.push( {row: center, col: center} );
-    setSquare(center, center, 'head');
-    fillSquare(center, center, 'head');
+    snake.push({row: center, col: center});
     // Place snake body (only 1 square)
     snake.push({row: (center+1), col: center});
-    setSquare(center+1, center, 'body');
-    fillSquare(center+1, center, 'body');
     // Place snake tail
     snake.push({row: (center+2), col: center});
-    setSquare(center+2, center, 'tail');
-    fillSquare(center+2, center, 'tail');
+    
+    // Now that snake array has some elements, we can draw it on the grid.
+    drawSnakeFromSnakeArray();
 
     // Place the food somewhere
     var foodSquare = randomEmptySquare();
@@ -458,4 +460,173 @@ function restartGame() {
 function displayScore() {
     $(".scoreCounter").text(score);
 }
-  
+
+
+function generateGrid() {
+    const grid = $("#grid");
+    // Create grid of squares
+    for (var i = 0; i < gridlength; i++) {
+        var row = $("<div>").addClass("divRow");
+        var gridarrayrow = new Array(gridlength);
+        for (var j = 0; j < gridlength; j++) {
+            // Create square/span
+            var span = $("<span>");
+            span.addClass("square");
+            span.attr({
+                row: i,
+                col: j
+            });
+            row.append(span);
+        }
+        grid.append(row);
+        gridarray.push(gridarrayrow);
+    }
+}
+
+function createBorder() {
+    // Create border
+    $(".square[row=0]").addClass("wall");
+    $(".square[row=" + (gridlength-1) + "]").addClass("wall");
+    $(".square[col=0]").addClass("wall");
+    $(".square[col=" + (gridlength-1) + "]").addClass("wall");
+
+    // Create border in gridarray
+    for (var i=0; i<gridlength; i++) {
+        for (var j=0; j<gridlength; j++) {
+            if (i === 0 || i === gridlength-1 || j === 0 || j === gridlength-1) {
+                setSquare(i, j, 'wall');
+            }
+        }
+    }
+}
+
+
+
+function drawSnakeFromSnakeArray() {
+    // We want to generate the grid (and gridarray) based on the snake array.
+    // This way, when someone wants to pause their game, their snake array gets
+    // saved in the database, then when they come back to the game on either the
+    // same device or a new one, the snake array is retrieved from the database
+    // and the grid is redrawn and the gridarray is set also.
+
+    // We assume that the snake array has already been retrieved and set in the 
+    // 'snake' variable.
+
+    // Each element of 'snake' is an object in the format {row: 'row#', col: 'col#'}
+    // Where row# and col# are numbers, not strings.
+
+    // If we loop through snake array, we can set gridarray
+    // Let's assume that gridarray already has 'wall' on its border.
+    for (let i=0; i < snake.length; i++) {
+        const square = snake[i];
+        let value = "";
+
+        if (i === 0)
+            value = "head";
+        else if (i === snake.length - 1)
+            value = "tail";
+        else
+            value = "body";
+
+        // Give the square in gridarray, that value.
+        setSquare(square.row, square.col, value);
+        // Give the square in #grid, that class.
+        fillSquare(square.row, square.col, value);
+    }
+
+}
+
+
+function loadCurrentGameFromFirebase() {
+    if (user) {
+        console.log("User logged in.")
+        firebase.database().ref("/currentGame").once("value").then(function(snapshot) {
+            userHasCurrentGame = snapshot.child(user.uid).exists(); // true or false
+            console.log("User has a current game")
+
+            // If the user has a current game in Firebase, load the snake from currentGame.snakePosition
+            // Update the score and the steps.
+            if (userHasCurrentGame && confirm(
+                "You have a game in progress. Would you like to resume? " + 
+                "\n(WARNING: If you cancel, this game will be erased.)"
+                )) {
+                userCurrentGameData = snapshot.child(user.uid).val();
+
+                snake = JSON.parse(userCurrentGameData.snakePosition);
+                steps = JSON.parse(userCurrentGameData.stepCount);
+                score = snake.length;
+                extralives = userCurrentGameData.extralives;
+                direction = nextDirection = userCurrentGameData.direction;
+                console.log("Loaded currentGame from Firebase");
+                console.log("currentGame data", userCurrentGameData);
+                displayScore();
+
+                
+                // Reset the grid and draw the snake.
+                resetGrid();
+                drawSnakeFromSnakeArray();
+
+                // Place the food somewhere
+                var foodSquare = randomEmptySquare();
+                setSquare(foodSquare.row, foodSquare.col, 'food');
+                fillSquare(foodSquare.row, foodSquare.col, 'food');
+            }
+            else {
+                // Set the snake and first food item to default setting
+                resetGame();
+            }
+        });
+
+    }
+}
+
+
+function resetGrid() {
+    gridarray = [];
+    $("#grid").empty();
+    // Create grid of squares
+    generateGrid();
+    // Create border
+    createBorder();
+}
+
+
+function placeExtraLife() {
+    var blueSquare;
+    if (snake.length > 0 && snake.length % 3 === 0 && !extralifeOnGrid) {
+        // Place a blue extra life square in an empty square.
+        blueSquare = randomEmptySquare();
+        setSquare(blueSquare.row, blueSquare.col, "extralife");
+        fillSquare(blueSquare.row, blueSquare.col, "extralife");
+
+        
+        console.log("An extralife square has been placed in", blueSquare);
+        extralifeOnGrid = true;
+        
+        // After a certain time, turn that square back into normal.
+        var amtSeconds = 10; 
+        // I want the extra life to be on the grid for between 10 and 45 seconds.
+        // Minimum 10 and max 45. This depends on the length of the snake.
+        // If the snake is 150 squares long, then it will get 45 seconds.
+        // Above 150 will get a little bit more.
+        amtSeconds = Math.floor((snake.length / 150) * (45 - 10) + 10);
+        setTimeout(function() {
+            setSquare(blueSquare.row, blueSquare.col, undefined);
+            fillSquare(blueSquare.row, blueSquare.col, "");
+            extralifeOnGrid = false;
+
+            // Clear the square's text and stop the countdown.
+            $(".square[row=" + blueSquare.row + "][col=" + blueSquare.col + "]").text("");
+            clearInterval(countdown);
+        }, amtSeconds * 1000);
+
+        // $(".square[row=" + blueSquare.row + "][col=" + blueSquare.col + "]").text(amtSeconds);
+
+        var secondsLeft = amtSeconds;
+
+        var countdown = setInterval(function() {
+            $(".square[row=" + blueSquare.row + "][col=" + blueSquare.col + "]").text(secondsLeft);
+            secondsLeft--;
+        }, 1000);
+    }
+}

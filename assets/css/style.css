@@ -15,6 +15,9 @@
     /* float: left; */
     /* display: inline; */
     display: table-cell;
+
+    
+    font-size: .8em;
 }
 
 .divRow {
@@ -71,6 +74,11 @@
 
 .food {
     background: red;
+}
+
+.extralife {
+    background: blue;
+    color: white;
 }
 
 h2 {

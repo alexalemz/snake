@@ -1,0 +1,77 @@
+When the user visits the page:
+
+- SIGNED IN
+    - HAS AN UNFINISHED GAME
+        - Ask if they want to continue their unfinished game (display the score)
+        - Or if they want to start a new game.
+    - DOESN'T HAVE AN UNFINISHED GAME
+        - Start a new game.
+- NOT SIGNED IN
+    - CAN SIGN IN
+        - WAS IN THE MIDDLE OF A GAME (score was at least 15 or so)
+            - Temporarily saves that game. 
+            - Checks if they have an unfinished game.
+                - IF THEY HAD AN UNFINISHED GAME
+                    - Ask if they want to resume that game (display the score).
+                    - Or if they want to continue their current game (whatever the score was).
+                    - Or if they want to start a new game.
+                - IF THEY DIDN'T HAVE AN UNFINISHED GAME
+                    - Continue the game they were playing before they signed in.
+        - IF THEY WERE NOT IN THE MIDDLE OF A GAME
+            - (See flow for SIGNED IN above)
+        - THEY LOSE
+            - Ask if they would like to sign in to save their score.
+
+
+
+What's the deal with 'unfinished games'?
+    Whenever a user is playing a game, in the database they have a 'current game'. 
+Once they lose this game, the current game gets saved to their game history, and the 
+'current game' data gets erased. When the user visits a page for the first time, or 
+refreshes the page, the game checks if they have a 'current game', it will then ask 
+them if they want to continue that game. If they say no, then that game will get 
+saved to their game history, then erased. A user can only have one current game at a 
+time. When the old current game gets erased, the new game they start becomes the 
+current game. 
+    The 'current game' holds data about the snake's position (from the snake array). 
+It holds the current score. It holds the date/time of the last time it was updated. 
+It gets updated every time the player gets the red square. 
+Overview:
+    CURRENT GAME
+    - snakePosition (JSON.stringify(snake) at the moment the red square was eaten)
+    - stepCount
+    - currentScore
+    - date (timestamp of when the red square was eaten)
+-------------------------------------------------------------------------------------
+    If they resume their unfinished game, then the grid will be filled with the snake 
+in the same position it was at the last time it got the red square. 
+
+
+CURRENTGAME in the Database
+    So, whenever the user gets a red square, the database's currentGame is updated 
+with new data. Also, whenever their current score is higher than their previous 
+high score (the highest score in their 'history'), the current score is displayed 
+in the high score display.
+
+We can check if a user has a currentGame in Firebase. If currentGames are stored like so:
+    /currentGame/user.uid
+Then we can do a snapshot of 'currentGame/' then check the existence of user.uid within it.
+For example: 
+    firebase.database().ref("currentGame").once("value").then(function(snapshot) {
+        var userExists = snapshot.child(user.uid).exists() // true or false
+    });
+
+
+
+Game State (i.e Playing, Paused, Game Over, Game Not-Yet-Started)
+Instead of storing the state in the pausePlayBtn, maybe I should have a function 
+called getState() which retrieves the current state, it's stored in a variable 
+somewhere. Then there's a function called setState(state) or changeState(state), 
+which will change the state, but also will change the button. This should be nice 
+because I can have one function to change the button's look, hopefully. 
+
+
+I should really make a flowchart from this, where I can see how all of the functions 
+are connected, and maybe a brief summary of what each function is trying to accomplish. 
+This will make it easy to navigate my code. And it will make it easier when I 
+want to refactor.

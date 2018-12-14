@@ -1,0 +1,86 @@
+[debug] [2018-08-11T17:15:28.608Z] ----------------------------------------------------------------------
+[debug] [2018-08-11T17:15:28.608Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Alex\AppData\Roaming\npm\node_modules\firebase-tools\bin\firebase serve
+[debug] [2018-08-11T17:15:28.608Z] CLI Version:   3.19.3
+[debug] [2018-08-11T17:15:28.608Z] Platform:      win32
+[debug] [2018-08-11T17:15:28.608Z] Node Version:  v8.11.1
+[debug] [2018-08-11T17:15:28.608Z] Time:          Sat Aug 11 2018 10:15:28 GMT-0700 (Pacific Daylight Time)
+[debug] [2018-08-11T17:15:28.608Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-08-11T17:15:28.686Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-08-11T17:15:28.686Z] > authorizing via signed-in user
+[debug] [2018-08-11T17:15:28.686Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-08-11T17:15:28.686Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ { refresh_token: '1/Jvg9SV7PLfaGOnuZ1NfW22ExFVLvaLG0Fh3I3UbkJrDs77aMoScDVj2cKDx3GeIy',
+  client_id: '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
+  client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
+  grant_type: 'refresh_token',
+  scope: 'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
+ Sat Aug 11 2018 10:15:28 GMT-0700 (Pacific Daylight Time)
+[debug] [2018-08-11T17:15:28.876Z] <<< HTTP RESPONSE 200
+[debug] [2018-08-11T17:15:29.048Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/snake-1f5f5  
+  
+ Sat Aug 11 2018 10:15:29 GMT-0700 (Pacific Daylight Time)
+[debug] [2018-08-11T17:15:30.392Z] <<< HTTP RESPONSE 200
+[debug] [2018-08-11T17:15:30.393Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/snake-1f5f5/tokens  
+  
+ Sat Aug 11 2018 10:15:30 GMT-0700 (Pacific Daylight Time)
+[debug] [2018-08-11T17:15:33.067Z] <<< HTTP RESPONSE 200
+[debug] [2018-08-11T17:15:33.068Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/snake-1f5f5  
+  
+ Sat Aug 11 2018 10:15:33 GMT-0700 (Pacific Daylight Time)
+[debug] [2018-08-11T17:15:33.420Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from 'C:\Users\Alex\Documents\UC Berkeley Coding Class\my own custom code\snake game'...
+[info] 
+[debug] [2018-08-11T17:15:33.422Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/28226935362/clients/_:getWebAppConfig  
+  
+ Sat Aug 11 2018 10:15:33 GMT-0700 (Pacific Daylight Time)
+[debug] [2018-08-11T17:15:33.935Z] <<< HTTP RESPONSE 200
+[info] i  hosting: Serving hosting files from: ./
+[info] +  hosting: Local server: http://localhost:5000
+
+[debug] [2018-08-11T17:52:08.644Z] Error: write after end
+    at write_ (_http_outgoing.js:622:15)
+    at ServerResponse.write (_http_outgoing.js:617:10)
+    at ReadStream.ondata (_stream_readable.js:639:20)
+    at emitOne (events.js:116:13)
+    at ReadStream.emit (events.js:211:7)
+    at addChunk (_stream_readable.js:263:12)
+    at readableAddChunk (_stream_readable.js:250:11)
+    at ReadStream.Readable.push (_stream_readable.js:208:10)
+    at fs.read (fs.js:2051:12)
+    at FSReqWrap.wrapper [as oncomplete] (fs.js:658:17)
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2018-08-11T17:54:29.221Z] ----------------------------------------------------------------------
+[debug] [2018-08-11T17:54:29.221Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Alex\AppData\Roaming\npm\node_modules\firebase-tools\bin\firebase serve
+[debug] [2018-08-11T17:54:29.221Z] CLI Version:   3.19.3
+[debug] [2018-08-11T17:54:29.221Z] Platform:      win32
+[debug] [2018-08-11T17:54:29.221Z] Node Version:  v8.11.1
+[debug] [2018-08-11T17:54:29.221Z] Time:          Sat Aug 11 2018 10:54:29 GMT-0700 (Pacific Daylight Time)
+[debug] [2018-08-11T17:54:29.221Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-08-11T17:54:29.237Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-08-11T17:54:29.237Z] > authorizing via signed-in user
+[debug] [2018-08-11T17:54:29.253Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/snake-1f5f5  
+  
+ Sat Aug 11 2018 10:54:29 GMT-0700 (Pacific Daylight Time)
+[debug] [2018-08-11T17:54:29.659Z] <<< HTTP RESPONSE 200
+[debug] [2018-08-11T17:54:29.659Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/snake-1f5f5/tokens  
+  
+ Sat Aug 11 2018 10:54:29 GMT-0700 (Pacific Daylight Time)
+[debug] [2018-08-11T17:54:30.050Z] <<< HTTP RESPONSE 200
+[debug] [2018-08-11T17:54:30.050Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/snake-1f5f5  
+  
+ Sat Aug 11 2018 10:54:30 GMT-0700 (Pacific Daylight Time)
+[debug] [2018-08-11T17:54:30.407Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from 'C:\Users\Alex\Documents\UC Berkeley Coding Class\my own custom code\snake game'...
+[info] 
+[debug] [2018-08-11T17:54:30.407Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/28226935362/clients/_:getWebAppConfig  
+  
+ Sat Aug 11 2018 10:54:30 GMT-0700 (Pacific Daylight Time)
+[debug] [2018-08-11T17:54:30.744Z] <<< HTTP RESPONSE 200
+[info] i  hosting: Serving hosting files from: ./
+[info] +  hosting: Local server: http://localhost:5000
+
